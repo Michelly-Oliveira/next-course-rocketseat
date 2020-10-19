@@ -1,7 +1,29 @@
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
+
+// Lazy loading a component - only load component when its needed by the user
+// ssr: false = always make the component load on the browser, client side
+const AddToCartModal = dynamic(() => import('@/components/AddToCartModal'), {
+	loading: () => <p>Loading...</p>,
+	ssr: false,
+});
 
 export default function Product() {
 	const router = useRouter();
+	const [isAddToCartModalVisible, setIsAddToCartModalVisible] = useState(false);
 
-	return <h1>{router.query.slug}</h1>;
+	function handleAddToCart() {
+		setIsAddToCartModalVisible(true);
+	}
+
+	return (
+		<div>
+			<h1>{router.query.slug}</h1>
+
+			<button onClick={handleAddToCart}>Add to cart</button>
+
+			{isAddToCartModalVisible && <AddToCartModal />}
+		</div>
+	);
 }
